@@ -1,6 +1,8 @@
 # Hickensa-Linux
 Hickensa Linux is a linux distro based on arch linux it is an automated installer that installs arch as I would normally including all of the gaming tweaks I run for increased performance in the games I play on a daily basis these may also increase system responsiveness decrease frame times and increase frame rate by a long shot 
 
+by the way to run the installer go to the terminal and type in ./main.py if you use wifi I recommend you first run nmtui and connect to your wifi 
+
 The stuff I do is most effective on intel but they also have an effect on amd cpus 
 
 Lets start with vm.swappiness which I am not sure applies when done in chroot but I will still talk about it here 
