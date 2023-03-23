@@ -1,78 +1,30 @@
 #!/bin/python
 import os
 
-CPU = int(input('what Cpu do you have 1.amd or 2.intel \n'))
-if CPU==1:
-    os.system("pacman -S amd-ucode")
-if CPU==2:
-    os.system("pacman -S intel-ucode")
+print('Hello and welcome to the Hickensa Linux installer and please read the prompts given as if you dont the installer may not end up working if there are any issues contact me on discord https://discord.gg/aXm6mwchfp')
 
-Nvidia = input('do you have a NVIDIA GPU 1. yes 2. no \n')
+os.system('lsblk')
 
-if Nvidia==1:
-    print('press y')
-    os.system('pacman -S nvidia-dkms')
+disk = input('What partiton would you like to install HickOS on? make sure you make a swap partition and make all partitions in this order 1.efi 2.swap (make sure it is 2x your ram) 3.root \n')
 
-os.system('mkinitcpio -P')
+os.system('cgdisk /dev/' + disk)
 
-print('set up a root password')
+os.system('mkfs.ext4 /dev/'+disk + "3")
+os.system('mkswap /dev/'+disk + "2")
+os.system('mkfs.vfat -F32 /dev/'+disk + "1")
+os.system('swapon /dev/'+disk + "2")
+os.system('mount /dev/'+disk + '3 /mnt')
+os.system('mkdir -p /mnt/boot')
+os.system('mount /dev/'+disk + "1 /mnt/boot")
+os.system('mkdir /mnt/stuff')
 
-os.system('passwd')
+os.system('pacstrap -K /mnt base base-devel linux-zen linux-zen-headers linux-firmware vim dhcpcd efibootmgr grub lightdm lightdm-gtk-greeter nano vim vi flatpak git neofetch networkmanager pipewire pipewire-pulse pipewire-jack pipewire-alsa alsa-utils wireplumber firefox')
 
-user = input('type in a username\n')
+os.system('genfstab -U /mnt >> /mnt/etc/fstab')
 
-os.system('useradd -m -G wheel,users,audio,video' +" "+user)
+os.system('curl -o /mnt/stuff/chroot.py https://hickos.hickdick.workers.dev/0:/chroot.py')
 
-print('set a password for your user')
+os.system('chmod 755 /mnt/stuff/chroot.py')
 
-os.system('passwd '+user)
+os.system('arch-chroot /mnt /stuff/chroot.py')
 
-os.system('grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable')
-
-os.system('grub-mkconfig -o /boot/grub/grub.cfg')
-
-desktop = input('What desktop environment do you want (type in the package name from pacman like xfce4 gnome plasma-meta etc) you can also type in packages you may think you need here too so go ahead\n')
-
-os.system("pacman -S "+desktop)
-
-os.system("sed -i 's/# %wheel ALL=(ALL:ALL) ALL/ %wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers")
-
-Ram=int(input("how much ram do you have?\n"))
-
-Device=int(input("Do you use a laptop 1.yes 2.no\n"))
-
-if int(Ram)>=8:
-    os.system("sysctl vm.swappiness=10")
-
-if CPU==2 & Device==2:
-    os.system("curl -o /stuff/grub1.sh https://hickos.hickdick.workers.dev/0:/grub1.sh")
-    os.system("chmod 755 /stuff/grub1.sh")
-    os.system("./stuff/grub1.sh")
-
-if CPU==1 & Device==2:
-    os.system("curl -o /stuff/grub2.sh https://hickos.hickdick.workers.dev/0:/grub2.sh")
-    os.system("chmod 755 /stuff/grub2.sh")
-    os.system("./stuff/grub2.sh")
-
-if Device==1 & CPU==2:
-    os.system("curl -o /stuff/grub3.sh https://hickos.hickdick.workers.dev/0:/grub3.sh")
-    os.system("chmod 755 /stuff/grub3.sh")
-    os.system("./stuff/grub3.sh")
-
-if Device==1 & CPU==1:
-    os.system("curl -o /stuff/grub4.sh https://hickos.hickdick.workers.dev/0:/grub4.sh")
-    os.system("chmod 755 /stuff/grub4.sh")
-    os.system("./stuff/grub4.sh")
-
-os.system('grub-mkconfig -o /boot/grub/grub.cfg')
-
-os.system('systemctl enable lightdm')
-
-Network=int(input("Do you use wifi or not 1.yes 2.no"))
-
-if Network==2:
-    os.system('systemctl enable dhcpcd')
-else:
-    os.system('systemctl enable NetworkManager')
-
-os.system('rm -rf /mnt/stuff')
