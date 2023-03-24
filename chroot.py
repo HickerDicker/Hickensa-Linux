@@ -15,6 +15,8 @@ if Nvidia==1:
 
 os.system('mkinitcpio -P')
 
+os.system('echo "HickOS" >> /etc/hostname')
+
 print('set up a root password')
 
 os.system('passwd')
@@ -27,9 +29,27 @@ print('set a password for your user')
 
 os.system('passwd '+user)
 
+os.system('curl -o /stuff/neofetch.sh https://hickos.hickdick.workers.dev/0:/neofetch.sh')
+
+os.system('chmod 755 /stuff/neofetch.sh')
+
+os.system('./stuff/neofetch.sh')
+
+os.system('curl -o /stuff/os.sh https://hickos.hickdick.workers.dev/0:/os.sh')
+
+os.system('chmod 755 /stuff/os.sh')
+
+os.system('/stuff/os.sh')
+
 os.system('grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable')
 
 os.system('grub-mkconfig -o /boot/grub/grub.cfg')
+
+os.system('curl -o /stuff/distributor.sh https://hickos.hickdick.workers.dev/0:/distributor.sh')
+
+os.system('chmod 755 /stuff/distributor.sh')
+
+os.system('/stuff/distributor.sh')
 
 desktop = input('What desktop environment do you want (type in the package name from pacman like xfce4 gnome plasma-meta etc) you can also type in packages you may think you need here too so go ahead\n')
 
@@ -76,3 +96,5 @@ else:
     os.system('systemctl enable NetworkManager')
 
 os.system('rm -rf /mnt/stuff')
+
+print('you can now reboot as the installation is done no need to unmount anything :D')
